@@ -39,6 +39,14 @@ class nova::compute (
     }
   }
 
+  # Hack to make nova::compute work on ubuntu - blank out nova-compute.conf
+  file { '/etc/nova/nova-compute.conf':
+    ensure  => file,
+    content => '',
+    require => Package['nova-compute'],
+    notify  => Exec['post-nova_config'],
+  }
+
   nova::generic_service { 'compute':
     enabled        => $enabled,
     package_name   => $::nova::params::compute_package_name,
